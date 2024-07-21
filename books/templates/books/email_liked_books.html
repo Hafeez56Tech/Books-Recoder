@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Liked Books</title>
+</head>
+<body>
+    <h1>Books You Liked</h1>
+    <ul>
+        {% for book in liked_books %}
+            <li>{{ book.title }} by {{ book.author.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

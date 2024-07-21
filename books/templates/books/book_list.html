@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <h1>Book List</h1>
+    <a href="{% url 'create_book' %}">add book</a>
+    <a href="{% url 'like_books' %}">Like by me</a>
+
+    <form method="GET">
+        <label for="author">Filter by author:</label>
+        <select name="author" id="author" onchange="this.form.submit()">
+            <option value="">All Authors</option>
+            {% for author in authors %}
+                <option value="{{ author.name }}" {% if author.name == request.GET.author %}selected{% endif %}>
+                    {{ author.name }}
+                </option>
+
+            {% endfor %}
+        </select>
+    </form>
+    <ul>
+        {% for book in books %}
+            <li>
+                <h2>{{ book.title }}</h2>
+                <p>{{ book.description }}</p>
+                <p>Author: {{ book.author.name }}</p>
+                <button class="like-btn" data-id="{{ book.id }}">
+                    {% if request.user in book.liked_by.all %}
+                        Unlike
+                    {% else %}
+                        Like
+                    {% endif %}
+                </button>
+            </li>
+            <li>
+                <a href="{% url 'book_detail' pk=book.pk %}">{{ book.title }}</a>
+                <a href="{% url 'update_book' pk=book.pk %}">Edit</a>
+                <a href="{% url 'delete_book' pk=book.pk %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <script>
+        $(document).ready(function(){
+            $('.like-btn').click(function(){
+                var btn = $(this);
+                var bookId = btn.data('id');
+                $.ajax({
+                    url: '/like/' + bookId + '/',
+                    type: 'GET',
+                    success: function(response) {
+                        if(response.liked) {
+                            btn.text('Unlike');
+                        } else {
+                            btn.text('Like');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

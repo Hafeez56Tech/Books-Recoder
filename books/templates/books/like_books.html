@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book List</title>
+</head>
+
+<body>
+    <h1>Book List</h1>
+    <a href="{% url 'create_book' %}">add book</a>
+    <ul>
+        {% for book in books %}
+            <li>
+                <h2>{{ book.title }}</h2>
+                <p>{{ book.description }}</p>
+                <p>Author: {{ book.author.name }}</p>
+                <button class="like-btn" data-id="{{ book.id }}">
+                    {% if request.user in book.liked_by.all %}
+                        Unlike
+                    {% else %}
+                        Like
+                    {% endif %}
+                </button>
+            </li>
+            <li>
+                <a href="{% url 'book_detail' pk=book.pk %}">{{ book.title }}</a>
+                <a href="{% url 'update_book' pk=book.pk %}">Edit</a>
+                <a href="{% url 'delete_book' pk=book.pk %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>
