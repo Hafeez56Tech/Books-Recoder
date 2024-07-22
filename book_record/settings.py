@@ -134,43 +134,24 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_URL = '/login/'
-
-# import os
-# from celery import Celery
-# from celery.schedules import crontab
-
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-# CELERY_BEAT_SCHEDULE = {
-#     'send-liked-books-email': {
-#         'task': 'books.tasks.send_liked_books_email',
-#         'schedule': crontab(hour=0, minute=0),  # Every day at midnight
-#     },
-# }
-
-
-import os
-from celery import Celery
-from celery.schedules import crontab
-
-# Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'book_record.settings')
-
-app = Celery('book_record')
-
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
-app.config_from_object('django.conf:settings', namespace='CELERY')
-
-# Load task modules from all registered Django app configs.
-app.autodiscover_tasks()
+from decouple import config
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {
-    'send-liked-books-email': {
-        'task': 'books.tasks.send_liked_books_email',
-        'schedule': crontab(hour=15, minute=5),  # Every day at 3:05 PM
+    'send-daily-emails': {
+        'task': 'emails.tasks.send_daily_emails',
+        'schedule': crontab(hour=10, minute=6),
     },
 }
