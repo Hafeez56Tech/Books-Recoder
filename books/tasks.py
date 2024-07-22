@@ -12,7 +12,7 @@ def send_daily_emails():
         send_email(user)
 
 def send_email(user):
-    books =Book.objects.filter(author=user)
+    books =Book.objects.filter(liked_by=user)
     subject = 'Daily Update'
     message = render_to_string('Here is your daily update.', {'books':books})
     
