@@ -152,6 +152,6 @@ from celery.schedules import crontab
 CELERY_BEAT_SCHEDULE = {
     'send-daily-emails': {
         'task': 'emails.tasks.send_daily_emails',
-        'schedule': crontab(hour=10, minute=6),
+        'schedule': crontab(hour=0, minute=0),
     },
 }

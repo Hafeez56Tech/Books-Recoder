@@ -107,18 +107,3 @@ def add_author(request):
     else:
         form = AuthorForm()
     return render(request, 'author/add_author.html', {'form': form})
-
-from django.core.mail import send_mail
-from django.contrib.auth.models import User
-from django.template.loader import render_to_string
-from django.conf import settings
-
-def send_liked_books_email(request):
-    users = User.objects.all()
-    for user in users:
-        liked_books = user.liked_books.all()
-        if liked_books:
-            subject = 'Your Liked Books'
-            message = render_to_string('books/email_liked_books.html', {'user': user, 'liked_books': liked_books})
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-            
